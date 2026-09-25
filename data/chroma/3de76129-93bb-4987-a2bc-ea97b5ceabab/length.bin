@@ -1,0 +1,5 @@
+Title: Advance
+Authors: Kien Duong, Vy Ly
+Published: 2026-06-07
+Categories: Robustness, Information Retrieval
+Summary: An extended empirical study on e introduce an automated fuzzing suite that corrupts text chunks by injecting noise, truncating titles, and blanking summaries. Experiments reveal critical failure thresholds for dense embedding retrieval Further analysis on scaling parameters.ÿÿÿÿÿÿ

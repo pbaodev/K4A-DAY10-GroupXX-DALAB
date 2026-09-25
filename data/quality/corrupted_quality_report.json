@@ -1,0 +1,157 @@
+{
+  "report_name": "corrupted",
+  "generated_at": "2026-09-25T09:38:11.614361+00:00",
+  "engine": "great_expectations 1.18.0 (ephemeral context)",
+  "row_count": 22,
+  "success": false,
+  "evaluated_expectations": 9,
+  "successful_expectations": 5,
+  "failed_expectations": [
+    "expect_column_values_to_be_unique(paper_id)",
+    "expect_column_value_lengths_to_be_between(title)",
+    "expect_column_value_lengths_to_be_between(summary)",
+    "expect_column_values_to_not_match_regex(summary)"
+  ],
+  "checks": [
+    {
+      "expectation": "expect_table_row_count_to_be_between",
+      "tier": "required",
+      "column": null,
+      "kwargs": {
+        "min_value": 5,
+        "max_value": 5000
+      },
+      "success": true,
+      "observed_value": 22,
+      "unexpected_count": null,
+      "unexpected_percent": null,
+      "partial_unexpected_list": []
+    },
+    {
+      "expectation": "expect_column_values_to_not_be_null",
+      "tier": "required",
+      "column": "paper_id",
+      "kwargs": {},
+      "success": true,
+      "observed_value": null,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "partial_unexpected_list": []
+    },
+    {
+      "expectation": "expect_column_values_to_be_unique",
+      "tier": "required",
+      "column": "paper_id",
+      "kwargs": {},
+      "success": false,
+      "observed_value": null,
+      "unexpected_count": 6,
+      "unexpected_percent": 27.27272727272727,
+      "partial_unexpected_list": [
+        "10.1145/3637528.3671819",
+        "10.1145/3637528.3671816",
+        "10.1145/3637528.3671814",
+        "10.1145/3637528.3671819",
+        "10.1145/3637528.3671816"
+      ]
+    },
+    {
+      "expectation": "expect_column_values_to_not_be_null",
+      "tier": "required",
+      "column": "title",
+      "kwargs": {},
+      "success": true,
+      "observed_value": null,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "partial_unexpected_list": []
+    },
+    {
+      "expectation": "expect_column_value_lengths_to_be_between",
+      "tier": "extra",
+      "column": "title",
+      "kwargs": {
+        "min_value": 8
+      },
+      "success": false,
+      "observed_value": null,
+      "unexpected_count": 4,
+      "unexpected_percent": 18.181818181818183,
+      "partial_unexpected_list": [
+        "Advance",
+        "Advance",
+        "Mitigat",
+        "Advance"
+      ]
+    },
+    {
+      "expectation": "expect_column_values_to_not_be_null",
+      "tier": "required",
+      "column": "text_for_embedding",
+      "kwargs": {},
+      "success": true,
+      "observed_value": null,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "partial_unexpected_list": []
+    },
+    {
+      "expectation": "expect_column_value_lengths_to_be_between",
+      "tier": "required",
+      "column": "summary",
+      "kwargs": {
+        "min_value": 30
+      },
+      "success": false,
+      "observed_value": null,
+      "unexpected_count": 3,
+      "unexpected_percent": 13.636363636363635,
+      "partial_unexpected_list": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "expectation": "expect_column_values_to_not_match_regex",
+      "tier": "extra",
+      "column": "summary",
+      "kwargs": {
+        "regex": "[^A-Za-z0-9\\s.,;:()'\\\"/%?!&+\\-]{3,}"
+      },
+      "success": false,
+      "observed_value": null,
+      "unexpected_count": 4,
+      "unexpected_percent": 18.181818181818183,
+      "partial_unexpected_list": [
+        "An extended empirical @@~~ study on single ~^% LLM is susceptible %$#@ to confirmation bias %$#@ when evaluating retrieved %$#@ evidence. We demonstrate @@~~ a multi-agent debate <<##>> architecture where specialized ~^% verifier agents critique <<##>> and corroborate citations @@~~ Further analysis on &*#! scaling parameters.",
+        "An extended empirical #@$ study on e ~^% define freshness service-level %$#@ agreements (SLAs) for <<##>> temporal document ingestion. &*#! By tracking document &*#! age and update ~^% cadence, our orchestrator ~^% dynamically prioritizes recrawling &*#! high-churn technical corpora #@$ Further analysis on #@$ scaling parameters.",
+        "Connecting LLMs directly <<##>> to raw warehouse #@$ tables often results &*#! in schema misunderstandings. &*#! A governed semantic @@~~ layer standardizes business &*#! metric definitions, dramatically #@$ boosting SQL generation %$#@ accuracy.",
+        "An extended empirical #@$ study on e ~^% define freshness service-level %$#@ agreements (SLAs) for <<##>> temporal document ingestion. &*#! By tracking document &*#! age and update ~^% cadence, our orchestrator ~^% dynamically prioritizes recrawling &*#! high-churn technical corpora #@$ Further analysis on #@$ scaling parameters."
+      ]
+    },
+    {
+      "expectation": "expect_column_values_to_not_be_null",
+      "tier": "extra",
+      "column": "age_days",
+      "kwargs": {},
+      "success": true,
+      "observed_value": null,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "partial_unexpected_list": []
+    }
+  ],
+  "freshness": {
+    "latest_published": "2026-06-12",
+    "oldest_published": "2025-04-18",
+    "stale_rows": 7,
+    "total_rows": 22,
+    "stale_ratio": 0.3182,
+    "freshness_threshold_days": 180,
+    "max_stale_ratio": 0.25,
+    "median_age_days": 115.0,
+    "is_fresh": false
+  },
+  "gate_passed": false
+}

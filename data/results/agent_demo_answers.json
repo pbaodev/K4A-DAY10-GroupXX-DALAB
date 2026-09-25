@@ -1,0 +1,14 @@
+{
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "answers": [
+    {
+      "question": "Which papers in the corpus discuss data quality gates or data observability for RAG?",
+      "answer": "Here are the papers in the corpus that discuss data quality gates or data observability for RAG (Retrieval-Augmented Generation):\n\n1. **Data Observability and Quality Gates for Production RAG Systems**\n   - **Authors**: Anh Tran, Quoc Pham\n   - **Published**: 2026-06-12\n   - **Summary**: This paper addresses silent data corruption in RAG pipelines that degrades LLM answer faithfulness without throwing runtime errors. It introduces automated quality gates using Great Expectations 1.x to catch stale and malformed embeddings before serving.\n   - **[Link to Paper](https://doi.org/10.1145/3637528.3671802)**\n\n2. **Advanced Perspectives on Data Observability and Quality Gates for Production RAG Systems**\n   - **Authors**: Anh Tran, Quoc Pham\n   - **Published**: 2026-06-02\n   - **Summary**: This extended empirical study further explores silent data corruption in RAG pipelines and introduces automated quality gates using Great Expectations 1.x. It includes further analysis on scaling parameters.\n   - **[Link to Paper](https://doi.org/10.1145/3637528.3671814)**\n\n3. **Advanced Perspectives on Automated Data Quality Profiling with Great Expectations in CI/CD**\n   - **Authors**: Son Nguyen, Thuy Doan\n   - **Published**: 2026-06-10\n   - **Summary**: This paper discusses embedding quality checks directly into data pipelines to enable fail-closed governance, showing how Great Expectations suites catch schema drifts and null fields before documents reach the embedding model.\n   - **[Link to Paper](https://doi.org/10.1145/3637528.3671822)**\n\n4. **Automated Data Quality Profiling with Great Expectations in CI/CD**\n   - **Authors**: Son Nguyen, Thuy Doan\n   - **Published**: 2026-06-08\n   - **Summary**: This paper also focuses on embedding quality checks in data pipelines for fail-closed governance, demonstrating how Great Expectations suites can catch schema drifts and null fields before documents reach the embedding model.\n   - **[Link to Paper](https://doi.org/10.1145/3637528.3671810)**\n\nThese papers provide insights into the implementation of data quality gates and observability in RAG systems."
+    },
+    {
+      "question": "Who authored the paper about freshness SLAs for real-time LLM knowledge augmentation?",
+      "answer": "The paper titled \"Freshness SLAs for Real-Time LLM Knowledge Augmentation\" was authored by Bao Do and Linh Ngo."
+    }
+  ]
+}

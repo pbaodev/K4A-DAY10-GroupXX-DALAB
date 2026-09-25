@@ -1,0 +1,109 @@
+{
+  "generated_at": "2026-09-25T09:38:11.509012+00:00",
+  "seed": 42,
+  "rows_before": 24,
+  "rows_after": 22,
+  "corruption_types": 6,
+  "corruptions": [
+    {
+      "type": "drop_latest_records",
+      "rows_affected": 5,
+      "paper_ids": [
+        "10.1145/3637528.3671812",
+        "10.1145/3637528.3671808",
+        "10.1145/3637528.3671804",
+        "10.1145/3637528.3671807",
+        "10.1145/3637528.3671802"
+      ],
+      "params": {
+        "ratio": 0.2
+      },
+      "simulates": "Incremental ingestion job failed; newest documents never arrive (stale knowledge).",
+      "detected_by": "Not caught by GX (row count still within 5-5000); visible as older latest_published and lower Hit Rate."
+    },
+    {
+      "type": "blank_summary",
+      "rows_affected": 3,
+      "paper_ids": [
+        "10.1145/3637528.3671810",
+        "10.1145/3637528.3671801",
+        "10.1145/3637528.3671811"
+      ],
+      "params": {
+        "ratio": 0.15
+      },
+      "simulates": "Upstream scraper/API returns an empty abstract field.",
+      "detected_by": "GX ExpectColumnValueLengthsToBeBetween(summary >= 30 chars)."
+    },
+    {
+      "type": "inject_noise",
+      "rows_affected": 3,
+      "paper_ids": [
+        "10.1145/3637528.3671820",
+        "10.1145/3637528.3671816",
+        "10.1145/3637528.3671806"
+      ],
+      "params": {
+        "ratio": 0.15,
+        "tokens": [
+          "#@$",
+          "~^%",
+          "&*#!",
+          "<<##>>",
+          "@@~~",
+          "%$#@"
+        ],
+        "every_n_words": 3
+      },
+      "simulates": "Broken encoding / OCR / HTML residue pollutes the abstract text.",
+      "detected_by": "GX ExpectColumnValuesToNotMatchRegex(summary, symbol runs) [extra check]."
+    },
+    {
+      "type": "truncate_title",
+      "rows_affected": 3,
+      "paper_ids": [
+        "10.1145/3637528.3671819",
+        "10.1145/3637528.3671813",
+        "10.1145/3637528.3671803"
+      ],
+      "params": {
+        "ratio": 0.15,
+        "max_chars": 7
+      },
+      "simulates": "Schema/column-width bug truncates titles, breaking exact title lookup.",
+      "detected_by": "GX ExpectColumnValueLengthsToBeBetween(title >= 8 chars) [extra check]."
+    },
+    {
+      "type": "stale_date",
+      "rows_affected": 6,
+      "paper_ids": [
+        "10.1145/3637528.3671823",
+        "10.1145/3637528.3671821",
+        "10.1145/3637528.3671817",
+        "10.1145/3637528.3671813",
+        "10.1145/3637528.3671811",
+        "10.1145/3637528.3671803"
+      ],
+      "params": {
+        "ratio": 0.3,
+        "shift_days": 365
+      },
+      "simulates": "An old snapshot is replayed / date parsing bug shifts publication dates into the past.",
+      "detected_by": "Freshness SLA (share of rows with age_days > 180 exceeds 25%)."
+    },
+    {
+      "type": "duplicate_rows",
+      "rows_affected": 3,
+      "paper_ids": [
+        "10.1145/3637528.3671819",
+        "10.1145/3637528.3671816",
+        "10.1145/3637528.3671814"
+      ],
+      "params": {
+        "ratio": 0.15
+      },
+      "simulates": "Non-idempotent retry appends the same batch twice (ghost/duplicate vectors).",
+      "detected_by": "GX ExpectColumnValuesToBeUnique(paper_id)."
+    }
+  ]
+}
