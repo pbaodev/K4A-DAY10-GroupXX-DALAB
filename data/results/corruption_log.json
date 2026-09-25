@@ -1,0 +1,62 @@
+[
+  {
+    "type": "drop_latest",
+    "rows_affected": 5,
+    "paper_ids": [
+      "10.1145/3637528.3671812",
+      "10.1145/3637528.3671808",
+      "10.1145/3637528.3671804",
+      "10.1145/3637528.3671807",
+      "10.1145/3637528.3671802"
+    ],
+    "detail": "Dropped the 5 newest records (20%) by published date."
+  },
+  {
+    "type": "blank_summary",
+    "rows_affected": 1,
+    "paper_ids": [
+      "10.1145/3637528.3671820"
+    ],
+    "detail": "Set summary to an empty string."
+  },
+  {
+    "type": "inject_noise",
+    "rows_affected": 1,
+    "paper_ids": [
+      "10.1145/3637528.3671806"
+    ],
+    "detail": "Prefixed summary with 6 random junk tokens (seed=42)."
+  },
+  {
+    "type": "truncate_title",
+    "rows_affected": 1,
+    "paper_ids": [
+      "10.1145/3637528.3671817"
+    ],
+    "detail": "Cut title down to 6 characters."
+  },
+  {
+    "type": "stale_date",
+    "rows_affected": 8,
+    "paper_ids": [
+      "10.1145/3637528.3671824",
+      "10.1145/3637528.3671815",
+      "10.1145/3637528.3671803",
+      "10.1145/3637528.3671814",
+      "10.1145/3637528.3671805",
+      "10.1145/3637528.3671818",
+      "10.1145/3637528.3671816",
+      "10.1145/3637528.3671821"
+    ],
+    "detail": "Moved published back 365 days and increased age_days to match."
+  },
+  {
+    "type": "duplicate_rows",
+    "rows_affected": 2,
+    "paper_ids": [
+      "10.1145/3637528.3671801",
+      "10.1145/3637528.3671823"
+    ],
+    "detail": "Appended a second copy of each row with the same paper_id."
+  }
+]

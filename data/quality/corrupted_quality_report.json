@@ -1,0 +1,158 @@
+{
+  "report_name": "corrupted",
+  "success": false,
+  "row_count": 21,
+  "expectations": [
+    {
+      "expectation": "expect_table_row_count_to_be_between",
+      "type": "expect_table_row_count_to_be_between",
+      "column": null,
+      "success": true,
+      "observed": {
+        "observed_value": 21
+      },
+      "kwargs": {
+        "batch_id": "papers_source-papers_asset",
+        "min_value": 5,
+        "max_value": 5000
+      }
+    },
+    {
+      "expectation": "expect_column_values_to_not_be_null",
+      "type": "expect_column_values_to_not_be_null",
+      "column": "paper_id",
+      "success": true,
+      "observed": {
+        "element_count": 21,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "partial_unexpected_list": [],
+        "partial_unexpected_counts": [],
+        "partial_unexpected_index_list": []
+      },
+      "kwargs": {
+        "batch_id": "papers_source-papers_asset",
+        "column": "paper_id"
+      }
+    },
+    {
+      "expectation": "expect_column_values_to_be_unique",
+      "type": "expect_column_values_to_be_unique",
+      "column": "paper_id",
+      "success": false,
+      "observed": {
+        "element_count": 21,
+        "unexpected_count": 4,
+        "unexpected_percent": 19.047619047619047,
+        "partial_unexpected_list": [
+          "10.1145/3637528.3671823",
+          "10.1145/3637528.3671801",
+          "10.1145/3637528.3671823",
+          "10.1145/3637528.3671801"
+        ],
+        "missing_count": 0,
+        "missing_percent": 0.0,
+        "unexpected_percent_total": 19.047619047619047,
+        "unexpected_percent_nonmissing": 19.047619047619047,
+        "partial_unexpected_counts": [
+          {
+            "value": "10.1145/3637528.3671801",
+            "count": 2
+          },
+          {
+            "value": "10.1145/3637528.3671823",
+            "count": 2
+          }
+        ],
+        "partial_unexpected_index_list": [
+          1,
+          13,
+          19,
+          20
+        ]
+      },
+      "kwargs": {
+        "batch_id": "papers_source-papers_asset",
+        "column": "paper_id"
+      }
+    },
+    {
+      "expectation": "expect_column_values_to_not_be_null",
+      "type": "expect_column_values_to_not_be_null",
+      "column": "title",
+      "success": true,
+      "observed": {
+        "element_count": 21,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "partial_unexpected_list": [],
+        "partial_unexpected_counts": [],
+        "partial_unexpected_index_list": []
+      },
+      "kwargs": {
+        "batch_id": "papers_source-papers_asset",
+        "column": "title"
+      }
+    },
+    {
+      "expectation": "expect_column_values_to_not_be_null",
+      "type": "expect_column_values_to_not_be_null",
+      "column": "text_for_embedding",
+      "success": true,
+      "observed": {
+        "element_count": 21,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "partial_unexpected_list": [],
+        "partial_unexpected_counts": [],
+        "partial_unexpected_index_list": []
+      },
+      "kwargs": {
+        "batch_id": "papers_source-papers_asset",
+        "column": "text_for_embedding"
+      }
+    },
+    {
+      "expectation": "expect_column_value_lengths_to_be_between",
+      "type": "expect_column_value_lengths_to_be_between",
+      "column": "summary",
+      "success": false,
+      "observed": {
+        "element_count": 21,
+        "unexpected_count": 1,
+        "unexpected_percent": 4.761904761904762,
+        "partial_unexpected_list": [
+          ""
+        ],
+        "missing_count": 0,
+        "missing_percent": 0.0,
+        "unexpected_percent_total": 4.761904761904762,
+        "unexpected_percent_nonmissing": 4.761904761904762,
+        "partial_unexpected_counts": [
+          {
+            "value": "",
+            "count": 1
+          }
+        ],
+        "partial_unexpected_index_list": [
+          5
+        ]
+      },
+      "kwargs": {
+        "batch_id": "papers_source-papers_asset",
+        "column": "summary",
+        "min_value": 30
+      }
+    }
+  ],
+  "freshness": {
+    "latest_published": "2026-06-11",
+    "oldest_published": "2025-03-28",
+    "stale_rows": 8,
+    "total_rows": 21,
+    "stale_ratio": 0.38095238095238093,
+    "threshold_days": 180,
+    "max_stale_ratio": 0.25,
+    "is_fresh": false
+  }
+}
