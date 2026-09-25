@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from langchain.agents import create_agent
 from langchain.tools import tool
 
-from core.config import Settings
+from core.config import Settings, normalized_provider
+from core.utils import write_json
 from retrieval.index import LocalEmbeddingIndex
 from retrieval.llm import build_llm
 
@@ -57,3 +59,40 @@ def run_agent_question(agent: Any, question: str) -> str:
         return ""
     final_message = messages[-1]
     return getattr(final_message, "content", str(final_message))
+
+
+def run_agent_demo(
+    settings: Settings,
+    index: LocalEmbeddingIndex,
+    questions: list[str],
+    output_path,
+) -> list[dict[str, Any]]:
+    """Run the tool-calling agent on a few questions; never fail the pipeline, record why instead."""
+    provider = normalized_provider(settings)
+
+    def describe(exc: Exception) -> str:
+        detail = str(exc) or ("the mock LLM cannot call tools" if provider == "mock" else "no error message")
+        return f"{type(exc).__name__}: {detail}"
+
+    rows: list[dict[str, Any]] = []
+    try:
+        agent = build_agent(settings, index)
+        build_error = None
+    except Exception as exc:
+        agent = None
+        build_error = describe(exc)
+
+    for question in questions:
+        row = {"question": question, "provider": provider, "model": settings.model_name}
+        if agent is None:
+            row.update(status="skipped", answer="", reason=f"Agent unavailable: {build_error}")
+        else:
+            try:
+                answer = run_agent_question(agent, question)
+                row.update(status="ok", answer=answer if isinstance(answer, str) else str(answer), reason="")
+            except Exception as exc:
+                row.update(status="skipped", answer="", reason=describe(exc))
+        rows.append(row)
+
+    write_json(Path(output_path), rows)
+    return rows
