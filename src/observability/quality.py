@@ -50,40 +50,51 @@ def _expectation_results(df: pd.DataFrame) -> list[dict[str, Any]]:
     context = gx.get_context(mode="ephemeral")
     data_source = context.data_sources.add_pandas(name="papers_source")
     data_asset = data_source.add_dataframe_asset(name="papers_asset")
-    batch_definition = data_asset.add_batch_definition_whole_dataframe("papers_batch")
-    suite = context.suites.add(
-        gx.ExpectationSuite(
-            name="papers_suite",
-            expectations=[
-                ExpectTableRowCountToBeBetween(min_value=_ROW_COUNT_MIN, max_value=_ROW_COUNT_MAX),
-                *[
-                    ExpectColumnValuesToNotBeNull(column=column)
-                    for column in _REQUIRED_COLUMNS
-                ],
-                ExpectColumnValuesToBeUnique(column="paper_id"),
-                ExpectColumnValueLengthsToBeBetween(column="summary", min_value=_SUMMARY_MIN_CHARS),
-            ],
-        )
+    batch_def = data_asset.add_batch_definition_whole_dataframe("papers_batch")
+    batch = batch_def.get_batch(batch_parameters={"dataframe": df})
+    suite = gx.ExpectationSuite(
+        name="papers_suite",
+        expectations=[
+            ExpectTableRowCountToBeBetween(min_value=_ROW_COUNT_MIN, max_value=_ROW_COUNT_MAX),
+            *[ExpectColumnValuesToNotBeNull(column=column) for column in _REQUIRED_COLUMNS],
+            ExpectColumnValuesToBeUnique(column="paper_id"),
+            ExpectColumnValueLengthsToBeBetween(column="summary", min_value=_SUMMARY_MIN_CHARS),
+        ],
     )
-    validation_definition = context.validation_definitions.add(
-        gx.ValidationDefinition(
-            name="papers_validation",
-            data=batch_definition,
-            suite=suite,
-        )
-    )
-    result = validation_definition.run(batch_parameters={"dataframe": df})
+    result = batch.validate(suite)
     parsed: list[dict[str, Any]] = []
     for item in result.results:
-        config = item.expectation_config
+        payload = item.to_json_dict()
+        config = payload.get("expectation_config") or {}
+        kwargs = _json_ready(config.get("kwargs") or {})
+        expectation = config.get("type")
         parsed.append(
             {
-                "type": config.type,
+                "expectation": expectation,
+                "type": expectation,
+                "column": kwargs.get("column"),
                 "success": bool(item.success),
-                "kwargs": dict(config.kwargs),
+                "observed": _json_ready(payload.get("result") or {}),
+                "kwargs": kwargs,
             }
         )
     return parsed
+
+
+def _json_ready(value: Any) -> Any:
+    """Convert GX results into values ``json.dumps`` can write."""
+    if isinstance(value, dict):
+        return {str(key): _json_ready(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_ready(item) for item in value]
+    if isinstance(value, (str, int, float, bool)) or value is None:
+        return value
+    if hasattr(value, "item"):
+        try:
+            return _json_ready(value.item())
+        except Exception:
+            return str(value)
+    return str(value)
 
 
 def _freshness_payload(df: pd.DataFrame, settings: Settings) -> dict[str, Any]:
@@ -118,6 +129,7 @@ def _quality_report_path(settings: Settings, report_name: str) -> Path:
     named = {
         "baseline": settings.paths.baseline_quality_report,
         "corrupted": settings.paths.corrupted_quality_report,
+        "repaired": settings.paths.quality_dir / "repaired_quality_report.json",
     }
     return named.get(report_name, settings.paths.quality_dir / f"{report_name}_quality_report.json")
 
