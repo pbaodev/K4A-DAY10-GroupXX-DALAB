@@ -13,7 +13,7 @@
 | 1 | Phan Duy Bảo | 2A202602767 | [Email] | @pbaodev | Trưởng nhóm / Pipeline Integrator (`pipelines/phase1.py`, `pipelines/corruption_flow.py`, `core/`, artifacts `data/`) | #9 | `report/<MSSV1>_HoTen.md` |
 | 2 | Trang Phước Hoàng Minh | 2A202602690 | hminh1231@gmail.com | @hminh1231 | Data Foundation & Recovery (`crossref.py`, `cleaning.py`, `repair.py`) | #3 | `report/2A202602690_TrangPhuocHoangMinh.md` |
 | 3 | Vũ Quốc Bảo | 2A202602829 | baovq2509@gmail.com | @byllkoy259 | RAG & Evaluation (`testset.py`, `corruption.py`, `retrieval/`, ChromaDB) | #6 | `report/2A202602829_VuQuocBao.md` |
-| 4 | Lê Gia Bảo | 2A202602887 | [Email] | @oabga | Observability & Reporting (`quality.py` GX 1.x, Freshness SLA, `reporting.py`) | #5 | `report/<MSSV4>_HoTen.md` |
+| 4 | Lê Gia Bảo | 2A202602887 | [Email] | @oabga | Observability & Reporting (`quality.py` GX 1.x, Freshness SLA, `reporting.py`) | #5 | `report/2A202602887_LeGiaBao.md` |
 
 *(Nếu nhóm có 3 hoặc 5-6 thành viên, xem bảng phân công chi tiết theo vai trò trong file `CHECKPOINTS.md`)*.
 
@@ -71,11 +71,13 @@
   - Muốn đo được silent failure thì bộ đề phải cố định và sinh từ dữ liệu sạch, còn lỗi phải tiêm có chủ đích vào đúng các paper được hỏi.
   - Agent có thể trả lời "đúng" từ sai tài liệu (lấy nhầm bài "Advanced Perspectives" có cùng tác giả). Vì vậy cần đo cả retrieval hit lẫn chất lượng câu trả lời.
 
-### ## HoVaTen4-MSSV4
-- **Vai trò:** Phụ trách Data Observability & Benchmark Evaluation.
+### ## LeGiaBao-2A202602887
+- **Vai trò:** M4 — Data Observability & Reporting (@oabga, issue #5): Great Expectations 1.x, Freshness SLA, báo cáo so sánh 3 trạng thái.
 - **Công việc chi tiết đã hoàn thành:**
-  - Thiết lập Quality Gate theo chuẩn mới **Great Expectations 1.x** và giám sát Freshness SLA trong `src/observability/quality.py`.
-  - Xây dựng bộ câu hỏi đánh giá chuẩn trong `src/evaluation/testset.py`.
-  - Đo lường và xuất bảng đối chiếu 3 trạng thái vào `data/reports/corruption_report.md`.
+  - Thiết lập Quality Gate theo chuẩn mới **Great Expectations 1.x** trong `src/observability/quality.py` với `gx.get_context()`, `add_pandas()` và các expectation cần thiết để kiểm tra schema, độ duy nhất, độ dài và tính hợp lệ của dữ liệu trước khi index.
+  - Tính toán và ghi báo cáo Freshness SLA để theo dõi tỷ lệ bài báo quá hạn `age_days > 180`; báo cáo này quyết định `is_fresh` và cảnh báo sớm khi dữ liệu không còn đủ tươi cho serving layer.
+  - Hỗ trợ chuẩn hóa các biểu đồ/metric trong `src/observability/reporting.py` và xuất bảng đối chiếu Baseline vs Corrupted vs Repaired vào `data/reports/corruption_report.md`, đồng thời lưu các artifact `data/quality/*.json` và `data/quality/freshness_report*.json`.
+  - Kiểm tra các dấu hiệu của Silent Failure: dữ liệu có thể còn `pass` GX nhưng vẫn trả lời sai do stale_date hoặc summary rỗng, nên cần báo động ở tầng observability trước khi agent đưa ra trả lời.
 - **Điều học được / Đóng góp chính:**
-  - Cách thiết lập hệ thống cảnh báo sớm chặn đứng hiện tượng Silent Failure trước khi dữ liệu vào serving layer.
+  - Hệ thống cảnh báo sớm phải đo lường cả chất lượng dữ liệu và độ tươi của dữ liệu, không chỉ độ khớp kiểu dữ liệu. Với `stale_date`, retrieval vẫn hit nhưng câu trả lời sai vì `published` đã bị lùi, nên chỉ có Freshness SLA hoặc answer-level metric mới chặn được lỗi đúng lúc.
+  - Đây là cách thiết lập một Quality Gate hiệu quả: dữ liệu bị lỗi phải bị chặn ở ingress, không được để lọt vào serving layer mà chỉ “vẫn chạy” và tạo ra Silent Failure khó phát hiện.
