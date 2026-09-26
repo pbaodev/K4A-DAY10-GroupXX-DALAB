@@ -11,7 +11,7 @@
 | STT | Họ và tên | MSSV | Email | GitHub | Vai trò & Phân công công việc | Issue | Báo cáo cá nhân |
 |---:|---|---|---|---|---|---|---|
 | 1 | Phan Duy Bảo | 2A202602767 | [Email] | @pbaodev | Trưởng nhóm / Pipeline Integrator (`pipelines/phase1.py`, `pipelines/corruption_flow.py`, `core/`, artifacts `data/`) | #9 | `report/<MSSV1>_HoTen.md` |
-| 2 | Trang Phước Hoàng Minh | 2A202602690 | [Email] | @hminh1231 | Data Foundation & Recovery (`crossref.py`, `cleaning.py`, `repair.py`) | #3 | `report/<MSSV2>_HoTen.md` |
+| 2 | Trang Phước Hoàng Minh | 2A202602690 | hminh1231@gmail.com | @hminh1231 | Data Foundation & Recovery (`crossref.py`, `cleaning.py`, `repair.py`) | #3 | `report/2A202602690_TrangPhuocHoangMinh.md` |
 | 3 | Vũ Quốc Bảo | 2A202602829 | baovq2509@gmail.com | @byllkoy259 | RAG & Evaluation (`testset.py`, `corruption.py`, `retrieval/`, ChromaDB) | #6 | `report/2A202602829_VuQuocBao.md` |
 | 4 | Lê Gia Bảo | 2A202602887 | [Email] | @oabga | Observability & Reporting (`quality.py` GX 1.x, Freshness SLA, `reporting.py`) | #5 | `report/<MSSV4>_HoTen.md` |
 
@@ -30,14 +30,25 @@
 - **Điều học được / Đóng góp chính:**
   - Hiểu sâu sắc về thiết kế Idempotent Pipeline và quản lý trạng thái luồng dữ liệu đa tầng.
 
-### ## HoVaTen2-MSSV2
-- **Vai trò:** Phụ trách Ingestion, Làm sạch & Phục hồi dữ liệu.
+### ## TrangPhuocHoangMinh-2A202602690
+- **Vai trò:** M2 — Data Foundation & Recovery (@hminh1231, issue #3): Crossref ingestion, cleaning, idempotent repair.
 - **Công việc chi tiết đã hoàn thành:**
-  - Xây dựng module thu thập Crossref API với cơ chế Fallback offline trong `src/ingestion/crossref.py`.
-  - Chuẩn hóa schema, tính toán trường `age_days` và `text_for_embedding` trong `src/ingestion/cleaning.py`.
-  - Thực thi cơ chế Idempotent Repair phục hồi dữ liệu từ raw snapshot.
+  - **CP0 — Raw ingestion** (`src/ingestion/crossref.py`):
+    - `parse_crossref_payload` bóc `message.items` thành `PaperRecord`: DOI bỏ prefix `doi.org`, title, abstract đã gỡ markup, authors, subject, ngày `YYYY-MM-DD`.
+    - Mặc định đọc snapshot `data/raw/crossref_response.json`, không ghi đè raw. `REFRESH_SOURCE=1` gọi API, retry 3 lần khi 429/503 hoặc lỗi mạng, và fallback về snapshot nếu API hỏng.
+    - Snapshot trong repo parse ra 24 record.
+  - **CP1 — Cleaning** (`src/ingestion/cleaning.py`):
+    - Bỏ record thiếu `paper_id`, title hoặc ngày; khử trùng `paper_id`; sort `published` giảm dần rồi `paper_id`.
+    - `published`/`updated` là chuỗi `YYYY-MM-DD` (không dùng Timestamp). `age_days = (run_date - published).days`.
+    - `compose_text_for_embedding` ghép 5 dòng Title / Authors / Published / Categories / Summary.
+    - Phase 1 trên main: 24 raw record → 24 dòng sạch (`data/clean/papers_clean.json`).
+  - **CP5 — Repair** (`src/ingestion/repair.py`):
+    - `repair_from_raw` chỉ đọc `crossref_records.json`, chạy lại `build_clean_dataframe` với cùng `run_date`, ghi `papers_clean_repaired.csv/json`. Không đọc file corrupted.
+    - Cùng `run_date` thì hai lần repair ra cùng byte. Artifact repaired trên main khớp baseline: 24 dòng, hit rate 1.0, token F1 1.0, freshness `is_fresh=true`.
+  - Báo cáo cá nhân: `report/2A202602690_TrangPhuocHoangMinh.md`.
 - **Điều học được / Đóng góp chính:**
-  - Kỹ thuật truy vết nguồn gốc dữ liệu (Data Lineage) và bảo toàn raw snapshot trước khi biến đổi.
+  - Raw snapshot phải được giữ nguyên để repair dựng lại dữ liệu sạch, thay vì sửa từng ô trên dataframe đã bị tiêm lỗi.
+  - `published` và `age_days` trên clean schema là chỗ `stale_date` làm freshness và câu hỏi date gãy, rồi repair kéo cả hai trở lại.
 
 ### ## VuQuocBao-2A202602829
 - **Vai trò:** M3 — RAG & Evaluation (@byllkoy259, issue #6): test set benchmark, corruption suite, retrieval & agent.
